@@ -24,16 +24,18 @@ def init_db():
         conn = psycopg2.connect(**DB_CONFIG)
         cur = conn.cursor()
         cur.execute('''
-            CREATE TABLE IF NOT EXISTS content (
+            CREATE TABLE IF NOT EXISTS Users (
                 id SERIAL PRIMARY KEY,
-                title VARCHAR(255) NOT NULL,
-                body TEXT NOT NULL
+                userName VARCHAR(255) NOT NULL,
+                emailAddress TEXT NOT NULL,
+                phoneNumber VARCHAR(15) NOT NULL,
+                password VARCHAR(15) NOT NULL    
             )
         ''')
         conn.commit()
         cur.close()
         conn.close()
-        print("✅ Table 'content' is ready.")
+        print("✅ Table 'users' is ready.")
     except Exception as e:
         print("❌ Error initializing database:", e)
 
@@ -41,9 +43,11 @@ def init_db():
 # ----------------------------
 # Pydantic Model
 # ----------------------------
-class Content(BaseModel):
-    title: str
-    body: str
+class Users(BaseModel):
+    username: str
+    emailaddress: str
+    phonenumber:str
+    password:str
 
 
 # ----------------------------
@@ -66,93 +70,105 @@ app.add_middleware(
 # ----------------------------
 
 # 1️⃣ CREATE
-@app.post("/content")
-def create_content(item: Content):
+@app.post("/users")
+def create_users(item: Users):
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         cur = conn.cursor()
-        cur.execute("INSERT INTO content (title, body) VALUES (%s, %s) RETURNING id", (item.title, item.body))
+        cur.execute("INSERT INTO Users (username, emailaddress,phonenumber,password) VALUES (%s, %s,%s, %s) RETURNING id", (item.username, item.emailaddress , item.phonenumber,item.password))
         new_id = cur.fetchone()[0]
         conn.commit()
         cur.close()
         conn.close()
-        return {"message": "Content added successfully", "id": new_id}
+        return {"message": "Users added successfully", "id": new_id}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 # 2️⃣ READ (All Records)
-@app.get("/content")
-def get_all_content():
+@app.get("/users")
+def get_all_users():
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("SELECT * FROM content ORDER BY id ASC")
+        cur.execute("SELECT * FROM users ORDER BY id ASC")
         records = cur.fetchall()
         cur.close()
         conn.close()
         return [dict(record) for record in records]
+        #  # Convert all keys in each record to camelCase
+        # result = []
+        # for record in records:
+        #     camel_case_record = {to_camel_case(k): v for k, v in dict(record).items()}
+        #     result.append(camel_case_record)
+        # return result
+        # 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 # 3️⃣ READ (Single Record)
-@app.get("/content/{content_id}")
-def get_content(content_id: int):
+@app.get("/users/{user_id}")
+def get_users(user_id: int):
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("SELECT * FROM content WHERE id = %s", (content_id,))
+        cur.execute("SELECT * FROM users WHERE id = %s", (user_id,))
         record = cur.fetchone()
         cur.close()
         conn.close()
         if record:
             return dict(record)
         else:
-            raise HTTPException(status_code=404, detail="Content not found")
+            raise HTTPException(status_code=404, detail="Users not found")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 # 4️⃣ UPDATE
-@app.put("/content/{content_id}")
-def update_content(content_id: int, item: Content):
+@app.put("/users/{user_id}")
+def update_users(user_id: int, item: Users):
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         cur = conn.cursor()
-        cur.execute("UPDATE content SET title = %s, body = %s WHERE id = %s RETURNING id",
-                    (item.title, item.body, content_id))
+        cur.execute("UPDATE users SET username = %s, emailAddress = %s,phonenumber = %s,password = %s WHERE id = %s RETURNING id",
+                    (item.username, item.emailaddress,item.phonenumber,item.password, user_id))
         updated = cur.fetchone()
         conn.commit()
         cur.close()
         conn.close()
         if updated:
-            return {"message": "Content updated successfully", "id": content_id}
+            return {"message": "Users updated successfully", "id": user_id}
         else:
-            raise HTTPException(status_code=404, detail="Content not found")
+            raise HTTPException(status_code=404, detail="Users not found")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 # 5️⃣ DELETE
-@app.delete("/content/{content_id}")
-def delete_content(content_id: int):
+@app.delete("/users/{user_id}")
+def delete_users(user_id: int):
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         cur = conn.cursor()
-        cur.execute("DELETE FROM content WHERE id = %s RETURNING id", (content_id,))
+        cur.execute("DELETE FROM users WHERE id = %s RETURNING id", (user_id,))
         deleted = cur.fetchone()
         conn.commit()
         cur.close()
         conn.close()
         if deleted:
-            return {"message": "Content deleted successfully", "id": content_id}
+            return {"message": "Users deleted successfully", "id": user_id}
         else:
-            raise HTTPException(status_code=404, detail="Content not found")
+            raise HTTPException(status_code=404, detail="Users not found")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
+def to_camel_case(snake_str):
+    """Convert snake_case or lowercase to camelCase."""
+    parts = re.split(r'_| ', snake_str)
+    if not parts:
+        return snake_str
+    return parts[0] + ''.join(word.capitalize() for word in parts[1:])
 # ----------------------------
 # Run the Server
 # ----------------------------
