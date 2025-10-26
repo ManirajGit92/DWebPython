@@ -7,4 +7,4 @@ services:
     startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
     envVars:
       - key: DATABASE_URL
-        value: postgresql://<user>:<password>@<neon-host>/<dbname>?sslmode=require
+        value: "postgresql://neondb_owner:npg_ujTCihN6Yr0H@ep-long-tree-a15ne54g-pooler.ap-southeast-1.aws.neon.tech/DwebDB?sslmode=require&channel_binding=require"
