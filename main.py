@@ -9,14 +9,22 @@ import json
 # ----------------------------
 # Database Configuration
 # ----------------------------
+# DB_CONFIG = {
+#     "host": "localhost",
+#     "port": 5432,
+#     "dbname": "DynamicWebsite",
+#     "user": "postgres",
+#     "password": "Vinsa$POS$ool"
+# }
 DB_CONFIG = {
-    "host": "localhost",
-    "port": 5432,
-    "dbname": "DynamicWebsite",
-    "user": "postgres",
-    "password": "Vinsa$POS$ool"
+    "dbname":"DwebDB",
+    "user":"neondb_owner",
+    "password":"npg_ujTCihN6Yr0H",
+    "host":"ep-long-tree-a15ne54g-pooler.ap-southeast-1.aws.neon.tech",
+    "sslmode":"require"
 }
-
+# psql 'postgresql://neondb_owner:npg_ujTCihN6Yr0H@ep-long-tree-a15ne54g-pooler.ap-southeast-1.aws.neon.tech/DwebDB?sslmode=require&channel_binding=require'
+# DB_CONFIG ="postgresql://neondb_owner:npg_ujTCihN6Yr0H@ep-long-tree-a15ne54g-pooler.ap-southeast-1.aws.neon.tech/DwebDB?sslmode=require&channel_binding=require"
 # ----------------------------
 # Create Table (if not exists)
 # ----------------------------
@@ -24,6 +32,8 @@ def init_db():
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         cur = conn.cursor()
+        cur.execute("SELECT version();")
+        print(cur.fetchone())
         cur.execute('''
             CREATE TABLE IF NOT EXISTS Users (
                 id SERIAL PRIMARY KEY,
@@ -99,7 +109,9 @@ app.add_middleware(
 # ----------------------------
 # CRUD API Endpoints
 # ----------------------------
-
+@app.get("/")
+def root():
+    return {"message": "Welcome to FastAPI on Render!"}
 # Users
 # 1️⃣ CREATE
 @app.post("/users")
