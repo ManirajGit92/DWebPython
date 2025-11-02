@@ -9,20 +9,20 @@ import json
 # ----------------------------
 # Database Configuration
 # ----------------------------
-# DB_CONFIG = {
-#     "host": "localhost",
-#     "port": 5432,
-#     "dbname": "DynamicWebsite",
-#     "user": "postgres",
-#     "password": "Vinsa$POS$ool"
-# }
 DB_CONFIG = {
-    "dbname":"DwebDB",
-    "user":"neondb_owner",
-    "password":"npg_ujTCihN6Yr0H",
-    "host":"ep-long-tree-a15ne54g-pooler.ap-southeast-1.aws.neon.tech",
-    "sslmode":"require"
+    "host": "localhost",
+    "port": 5432,
+    "dbname": "DynamicWebsite",
+    "user": "postgres",
+    "password": "Vinsa$POS$ool"
 }
+# DB_CONFIG = {
+#     "dbname":"DwebDB",
+#     "user":"neondb_owner",
+#     "password":"npg_ujTCihN6Yr0H",
+#     "host":"ep-long-tree-a15ne54g-pooler.ap-southeast-1.aws.neon.tech",
+#     "sslmode":"require"
+# }
 # psql 'postgresql://neondb_owner:npg_ujTCihN6Yr0H@ep-long-tree-a15ne54g-pooler.ap-southeast-1.aws.neon.tech/DwebDB?sslmode=require&channel_binding=require'
 # DB_CONFIG ="postgresql://neondb_owner:npg_ujTCihN6Yr0H@ep-long-tree-a15ne54g-pooler.ap-southeast-1.aws.neon.tech/DwebDB?sslmode=require&channel_binding=require"
 # ----------------------------
@@ -64,10 +64,15 @@ def init_db():
         cur.execute('''
             CREATE TABLE IF NOT EXISTS webPage (
                 id SERIAL PRIMARY KEY,
-                webPageId VARCHAR(255) NOT NULL UNIQUE,    
+                webPageId VARCHAR(255) NOT NULL UNIQUE,
+                header jsonb DEFAULT '{}'     
                 home jsonb DEFAULT '{}',
                 aboutus jsonb DEFAULT '{}',
-                products jsonb DEFAULT '{}'                
+                products jsonb DEFAULT '{}',
+                contactus jsonb DEFAULT '{}',
+                footer jsonb DEFAULT '{}',
+                settings jsonb DEFAULT '{}'
+                                   
             )
         ''')
         cur.execute('CREATE INDEX IF NOT EXISTS idx_webPage_webPageId ON webPage(webPageId);')
@@ -90,9 +95,14 @@ class Users(BaseModel):
 
 class Webpage(BaseModel):
     webpageid: str
+    header: List[Any]
     home: List[Any]
     aboutus: List[Any]
     products: List[Any]
+    contactus: List[Any]
+    footer: List[Any]
+    settings: Dict[str, Any]
+
 # ----------------------------
 # FastAPI App
 # ----------------------------
@@ -236,8 +246,8 @@ def update_webpage(id: int, data: Webpage):
         # print('data==>',data)
         conn = psycopg2.connect(**DB_CONFIG)
         cur = conn.cursor()
-        cur.execute("UPDATE Webpage SET webpageid = %s, home = %s::jsonb, aboutus = %s::jsonb,products = %s::jsonb WHERE id = %s RETURNING id",
-                    (data.webpageid,json.dumps(data.home),json.dumps(data.aboutus),json.dumps(data.products),id))
+        cur.execute("UPDATE Webpage SET webpageid = %s,header = %s::jsonb,home = %s::jsonb, aboutus = %s::jsonb,products = %s::jsonb,contactus = %s::jsonb,footer = %s::jsonb,settings = %s::jsonb WHERE id = %s RETURNING id",
+                    (data.webpageid,json.dumps(data.header),json.dumps(data.home),json.dumps(data.aboutus),json.dumps(data.products),json.dumps(data.contactus),json.dumps(data.footer),json.dumps(data.settings),id))
         updated = cur.fetchone()
         conn.commit()
         cur.close()
