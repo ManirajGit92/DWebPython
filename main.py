@@ -194,7 +194,7 @@ def delete_users(user_id: int):
 # Webpage CRUD operations   
 # 2️⃣ READ (All Webpage Records)
 @app.get("/webpage")
-def get_all_users():
+def get_all_webpageData():
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -208,7 +208,7 @@ def get_all_users():
 
 # 3️⃣ READ (Single Record)
 @app.get("/webpage/{id}")
-def get_users(id: int):
+def get_webpageData(id: int):
     try:
         print("id===>",id)
         conn = psycopg2.connect(**DB_CONFIG)
@@ -265,7 +265,7 @@ def update_webpage(id: int, data: Webpage):
 
 # Products CRUD operations
 @app.post("/products")
-def create_users(item: Any):
+def create_products(item: Any):
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         cur = conn.cursor()
@@ -278,6 +278,103 @@ def create_users(item: Any):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
+# Reset webpage table
+@app.get("/resetwebpage")
+def reset_webpageTable():
+    try:
+        conn = psycopg2.connect(**DB_CONFIG)
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        query = """
+        INSERT INTO webPage (webPageId, header, home, aboutus, products, contactus, footer, settings)
+        VALUES 
+        (
+            'webPage1',
+            '[
+                {"title":"Home","detail":"home","type":"scroll"},
+                {"title":"Aboutus","detail":"about","type":"scroll"},
+                {"title":"Products","detail":"services","type":"scroll"},
+                {"title":"Contactus","detail":"contact","type":"scroll"},
+                {"title":"Login","detail":"login","type":"navigate"},
+                {"title":"Admin","detail":"admin","type":"navigate"}
+            ]'::jsonb,
+            '[
+              {
+                "image": "https://i.postimg.cc/RZ1mPhpJ/Army-Man.jpg",
+                "title": "Innovate with Confidence",
+                "detail": "We build cutting-edge web and AI solutions that help your business grow."
+              },
+              {
+                "image": "https://i.postimg.cc/c1KrF7RB/World-Map.jpg",
+                "title": "Design that Inspires",
+                "detail": "Modern, responsive, and beautiful designs tailored for your brand."
+              },
+              {
+                "image": "https://i.postimg.cc/Nfqfb3Gx/Indian-army-images-15.jpg",
+                "title": "Scale Seamlessly",
+                "detail": "Empowering your apps with performance, scalability, and great user experience."
+              }
+            ]'::jsonb,
+            '[
+              {
+                "title": "Our Mission",
+                "detail": "To deliver high-quality web solutions that empower businesses to grow and scale effectively."
+              },
+              {
+                "title": "Our Vision",
+                "detail": "To be a global leader in digital innovation and technology-driven transformation."
+              },
+              {
+                "title": "Our Values",
+                "detail": "Integrity, creativity, and collaboration form the core of everything we do."
+              },
+              {
+                "title": "Our Approach",
+                "detail": "We combine strategic thinking with modern tools to create efficient, user-focused products."
+              }
+            ]'::jsonb,
+            '[
+              { "title": "Web Development","image":"https://i.postimg.cc/hj1M6WWs/gun1.jpg" ,"detail": "Modern web apps using Angular and Node.js" },
+              { "title": "Mobile Apps","image":"https://i.postimg.cc/6q6zNjBB/gun2.jpg" , "detail": "Hybrid apps with Ionic and Capacitor" },
+              { "title": "Cloud Integration","image":"https://i.postimg.cc/wMW2xXB7/gun3.jpg" , "detail": "Seamless AWS and Azure integration" },
+              { "title": "AI Solutions","image":"https://i.postimg.cc/8cCdY7b7/gun4.jpg" , "detail": "Intelligent automation and chatbots" },
+              { "title": "UI/UX Design","image":"https://i.postimg.cc/bNsHH2J9/gun5.jpg" , "detail": "Beautiful and responsive designs" },
+              { "title": "SEO Optimization","image":"https://i.postimg.cc/4Nqv8N7M/gun6.jpg" , "detail": "Boost your online visibility" },
+              { "title": "DevOps","image":"https://i.postimg.cc/4xc6jkps/gun7.jpg" , "detail": "CI/CD and scalable deployment pipelines" },
+              { "title": "API Development","image":"https://i.postimg.cc/Xv0fbHgm/gun8.jpg" , "detail": "Secure REST and GraphQL APIs" },
+              { "title": "Consulting","image":"https://i.postimg.cc/6q6zNjBB/gun2.jpg" , "detail": "Technical guidance and architecture reviews" }
+            ]'::jsonb,
+            '[
+              {"title":"address","detail":"Chellappa Chettiar Temple WRR8+66R, Devakottai, Udayachi, Tamil Nadu 630302"},
+              {"title":"email","detail":"manirajmca.ac@gmail.com"},
+              {"title":"map","detail":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1964.9656486154352!2d78.81471954875092!3d9.939674502559942!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b005b1f62bfffff%3A0x18a02f6e5b3bf3e9!2sChellappa%20Chettiar%20Temple!5e0!3m2!1sen!2sin!4v1762067262513!5m2!1sen!2sin"},
+              {"title":"phone","detail":"9965972105"}
+            ]'::jsonb,
+            '[
+              {"title":"home","detail":"/home","heading":"Important Link","position":"left"},
+              {"title":"aboutus","detail":"/aboutus","heading":"Important Link","position":"left"},
+              {"title":"products","detail":"/products","heading":"Resource Link","position":"right"},
+              {"title":"contactus","detail":"/contactus","heading":"Resource Link","position":"right"}
+            ]'::jsonb,
+            '{
+              "logo":"https://cdn-icons-png.flaticon.com/512/4257/4257824.png",
+              "sitename":"NewDweb",
+              "font":"",
+              "textcolor":"",
+              "darktheme":"0"
+            }'::jsonb
+        );
+        """
+
+        cur.execute("DELETE FROM webPage;")  # clear old data if needed
+        cur.execute(query)
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {"message": "webPage table reset successfully."}
+
+    except Exception as e:
+        return {"error": str(e)}
 # help functions
 def to_camel_case(snake_str):
     """Convert snake_case or lowercase to camelCase."""
