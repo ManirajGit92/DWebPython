@@ -9,20 +9,20 @@ import json
 # ----------------------------
 # Database Configuration
 # ----------------------------
-DB_CONFIG = {
-    "host": "localhost",
-    "port": 5432,
-    "dbname": "DynamicWebsite",
-    "user": "postgres",
-    "password": "Vinsa$POS$ool"
-}
 # DB_CONFIG = {
-#     "dbname":"DwebDB",
-#     "user":"neondb_owner",
-#     "password":"npg_ujTCihN6Yr0H",
-#     "host":"ep-long-tree-a15ne54g-pooler.ap-southeast-1.aws.neon.tech",
-#     "sslmode":"require"
+#     "host": "localhost",
+#     "port": 5432,
+#     "dbname": "DynamicWebsite",
+#     "user": "postgres",
+#     "password": "Vinsa$POS$ool"
 # }
+DB_CONFIG = {
+    "dbname":"DwebDB",
+    "user":"neondb_owner",
+    "password":"npg_ujTCihN6Yr0H",
+    "host":"ep-long-tree-a15ne54g-pooler.ap-southeast-1.aws.neon.tech",
+    "sslmode":"require"
+}
 # psql 'postgresql://neondb_owner:npg_ujTCihN6Yr0H@ep-long-tree-a15ne54g-pooler.ap-southeast-1.aws.neon.tech/DwebDB?sslmode=require&channel_binding=require'
 # DB_CONFIG ="postgresql://neondb_owner:npg_ujTCihN6Yr0H@ep-long-tree-a15ne54g-pooler.ap-southeast-1.aws.neon.tech/DwebDB?sslmode=require&channel_binding=require"
 # ----------------------------
