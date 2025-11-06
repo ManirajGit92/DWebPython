@@ -34,48 +34,48 @@ def init_db():
         cur = conn.cursor()
         cur.execute("SELECT version();")
         print(cur.fetchone())
-        cur.execute('''
-            CREATE TABLE IF NOT EXISTS Users (
-                id SERIAL PRIMARY KEY,
-                userName VARCHAR(255) NOT NULL,
-                emailAddress TEXT NOT NULL,
-                phoneNumber VARCHAR(15) NOT NULL,
-                password VARCHAR(15) NOT NULL    
-            )
-        ''')
-        cur.execute('''
-            CREATE TABLE IF NOT EXISTS Products (
-                id SERIAL PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                category VARCHAR(255) NOT NULL,    
-                price DECIMAL(10,2) NOT NULL,
-                quantity DECIMAL(10,2) NOT NULL DEFAULT 0,
-                rating SMALLINT DEFAULT NULL,
-                descripton TEXT NOT NULL,
-                salescount DECIMAL(10,2) DEFAULT 0, 
-                spec jsonb DEFAULT '{}',
-                moreinfo jsonb DEFAULT '{}',
-                usersInfo jsonb DEFAULT '{}'                
-            )
-        ''')
-        cur.execute('CREATE INDEX IF NOT EXISTS idx_products_category ON Products(category);')
-        cur.execute('CREATE INDEX IF NOT EXISTS idx_products_name ON Products(name);')
+        # cur.execute('''
+        #     CREATE TABLE IF NOT EXISTS Users (
+        #         id SERIAL PRIMARY KEY,
+        #         userName VARCHAR(255) NOT NULL,
+        #         emailAddress TEXT NOT NULL,
+        #         phoneNumber VARCHAR(15) NOT NULL,
+        #         password VARCHAR(15) NOT NULL    
+        #     )
+        # ''')
+        # cur.execute('''
+        #     CREATE TABLE IF NOT EXISTS Products (
+        #         id SERIAL PRIMARY KEY,
+        #         name VARCHAR(255) NOT NULL,
+        #         category VARCHAR(255) NOT NULL,    
+        #         price DECIMAL(10,2) NOT NULL,
+        #         quantity DECIMAL(10,2) NOT NULL DEFAULT 0,
+        #         rating SMALLINT DEFAULT NULL,
+        #         descripton TEXT NOT NULL,
+        #         salescount DECIMAL(10,2) DEFAULT 0, 
+        #         spec jsonb DEFAULT '{}',
+        #         moreinfo jsonb DEFAULT '{}',
+        #         usersInfo jsonb DEFAULT '{}'                
+        #     )
+        # ''')
+        # cur.execute('CREATE INDEX IF NOT EXISTS idx_products_category ON Products(category);')
+        # cur.execute('CREATE INDEX IF NOT EXISTS idx_products_name ON Products(name);')
 
-        cur.execute('''
-            CREATE TABLE IF NOT EXISTS webPage (
-                id SERIAL PRIMARY KEY,
-                webPageId VARCHAR(255) NOT NULL UNIQUE,
-                header jsonb DEFAULT '{}'     
-                home jsonb DEFAULT '{}',
-                aboutus jsonb DEFAULT '{}',
-                products jsonb DEFAULT '{}',
-                contactus jsonb DEFAULT '{}',
-                footer jsonb DEFAULT '{}',
-                settings jsonb DEFAULT '{}'
+        # cur.execute('''
+        #     CREATE TABLE IF NOT EXISTS webPage (
+        #         id SERIAL PRIMARY KEY,
+        #         webPageId VARCHAR(255) NOT NULL UNIQUE,
+        #         header jsonb DEFAULT '{}'     
+        #         home jsonb DEFAULT '{}',
+        #         aboutus jsonb DEFAULT '{}',
+        #         products jsonb DEFAULT '{}',
+        #         contactus jsonb DEFAULT '{}',
+        #         footer jsonb DEFAULT '{}',
+        #         settings jsonb DEFAULT '{}'
                                    
-            )
-        ''')
-        cur.execute('CREATE INDEX IF NOT EXISTS idx_webPage_webPageId ON webPage(webPageId);')
+        #     )
+        # ''')
+        # cur.execute('CREATE INDEX IF NOT EXISTS idx_webPage_webPageId ON webPage(webPageId);')
         conn.commit()
         cur.close()
         conn.close()
