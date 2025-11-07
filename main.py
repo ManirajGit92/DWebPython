@@ -207,14 +207,13 @@ def get_all_webpageData():
         raise HTTPException(status_code=500, detail=str(e))
 
 # 3️⃣ READ (Single Record)
-@app.get("/webpage/{id}")
-def get_webpageData(id: int):
+@app.get("/webpage/{sitename}")
+def get_webpageData(sitename: str):
     try:
-        print("id===>",id)
+        sitename = sitename.strip().lower()
         conn = psycopg2.connect(**DB_CONFIG)
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("SELECT * FROM webpage WHERE id = %s", (id,))
-        print("cur===>",cur)
+        cur.execute("SELECT * FROM webpage WHERE LOWER(webpageid) = %s", (sitename,))
         record = cur.fetchone()
         cur.close()
         conn.close()
