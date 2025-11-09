@@ -239,20 +239,20 @@ def create_webpage(item: Webpage):
         raise HTTPException(status_code=500, detail=str(e))
 
 # 4️⃣ UPDATE
-@app.put("/webpage/{id}")
-def update_webpage(id: int, data: Webpage):
+@app.put("/webpage/{sitename}")
+def update_webpage(sitename: str, data: Webpage):
     try:
         # print('data==>',data)
         conn = psycopg2.connect(**DB_CONFIG)
         cur = conn.cursor()
-        cur.execute("UPDATE Webpage SET webpageid = %s,header = %s::jsonb,home = %s::jsonb, aboutus = %s::jsonb,products = %s::jsonb,contactus = %s::jsonb,footer = %s::jsonb,settings = %s::jsonb WHERE id = %s RETURNING id",
-                    (data.webpageid,json.dumps(data.header),json.dumps(data.home),json.dumps(data.aboutus),json.dumps(data.products),json.dumps(data.contactus),json.dumps(data.footer),json.dumps(data.settings),id))
+        cur.execute("UPDATE Webpage SET header = %s::jsonb,home = %s::jsonb, aboutus = %s::jsonb,products = %s::jsonb,contactus = %s::jsonb,footer = %s::jsonb,settings = %s::jsonb WHERE webpageid = %s RETURNING id",
+                    (json.dumps(data.header),json.dumps(data.home),json.dumps(data.aboutus),json.dumps(data.products),json.dumps(data.contactus),json.dumps(data.footer),json.dumps(data.settings),sitename))
         updated = cur.fetchone()
         conn.commit()
         cur.close()
         conn.close()
         if updated:
-            return {"message": "Webpage updated successfully", "id": id}
+            return {"message": "Webpage updated successfully", "sitename": sitename}
         else:
             raise HTTPException(status_code=404, detail="Webpage not found")
     except Exception as e:
@@ -288,7 +288,7 @@ def reset_webpageTable():
         INSERT INTO webPage (webPageId, header, home, aboutus, products, contactus, footer, settings)
         VALUES 
         (
-            'webPage1',
+            'sidha',
             '[
                 {"title":"Home","detail":"home","type":"scroll"},
                 {"title":"Aboutus","detail":"about","type":"scroll"},
